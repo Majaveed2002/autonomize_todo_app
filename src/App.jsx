@@ -22,9 +22,23 @@ function App() {
     setTodosInput("");
   };
 
+  const removeTodo = (index) => {
+    console.log(index);
+    const updatedTodos = [...todos];
+    updatedTodos.splice(index, 1);
+    setTodos(updatedTodos);
+  };
+
+  const editTodo = (index) => {
+    const updatedTodos = [...todos];
+    updatedTodos[index] = todosInput;
+    setTodos(updatedTodos);
+    setTodosInput("");
+  };
+
   const handleAddTodo = (e) => {
     e.preventDefault();
-    const quantity = todosInput.split(" ").slice(-1)[0];
+    const quantity = todosInput.trim("").split(" ").slice(-1)[0];
     if (isNaN(quantity)) {
       addTodo(todosInput);
     } else {
@@ -54,7 +68,13 @@ function App() {
       </form>
       <ul className="mt-4 min-w-[300px] max-w-full">
         {todos.map((item, index) => (
-          <TodoItem key={index} item={item} />
+          <TodoItem
+            key={index}
+            item={item}
+            index={index}
+            removeTodo={removeTodo}
+            editTodo={editTodo}
+          />
         ))}
       </ul>
     </div>
