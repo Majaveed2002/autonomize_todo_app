@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TodoItem from "./components/TodoItem";
 import "./App.css";
 
@@ -6,8 +6,17 @@ function App() {
   const [todos, setTodos] = useState([]);
   const [todosInput, setTodosInput] = useState("");
 
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem("todos"));
+    if (storedTodos) {
+      setTodos(storedTodos);
+    }
+  }, []);
+
+  // Add the Todo Item
   const addTodo = (todo) => {
     setTodos([...todos, todo]);
+    saveTodosToLocalStorage(todos);
     setTodosInput("");
   };
 
@@ -19,20 +28,7 @@ function App() {
       tasksArray.push(slicedTodo);
     }
     setTodos([...todos, ...tasksArray]);
-    setTodosInput("");
-  };
-
-  const removeTodo = (index) => {
-    console.log(index);
-    const updatedTodos = [...todos];
-    updatedTodos.splice(index, 1);
-    setTodos(updatedTodos);
-  };
-
-  const editTodo = (index) => {
-    const updatedTodos = [...todos];
-    updatedTodos[index] = todosInput;
-    setTodos(updatedTodos);
+    saveTodosToLocalStorage([...todos, ...tasksArray]);
     setTodosInput("");
   };
 
@@ -45,6 +41,28 @@ function App() {
       addTodosWithQuantity(todosInput, quantity);
     }
   };
+
+  // Delete the Todo Item
+  const removeTodo = (index) => {
+    const updatedTodos = [...todos];
+    updatedTodos.splice(index, 1);
+    saveTodosToLocalStorage(updatedTodos);
+    setTodos(updatedTodos);
+  };
+
+  // Edit the Todo Item
+  const editTodo = (index) => {
+    const updatedTodos = [...todos];
+    updatedTodos[index] = todosInput;
+    setTodos(updatedTodos);
+    saveTodosToLocalStorage(updatedTodos);
+    setTodosInput("");
+  };
+
+  //Save the Todos to Local Storage
+  function saveTodosToLocalStorage(todos) {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }
 
   return (
     <div className="h-screen bg-gray-700 flex flex-col justify-start items-center">
